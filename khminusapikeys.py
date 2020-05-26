@@ -128,8 +128,10 @@ async def on_message(message):
                 currenttemp = v['main']['temp']
                 low = v['main']['temp_min']
                 high = v['main']['temp_max']
-                weacon = v['weather'][0]['description']
+                weacon = str(v['weather'][0]['main']) + ',' + str(v(['weather'][0]['description])
+                icon = v['weather'][0]['icon']
                 embed = discord.Embed(colour = discord.Colour.from_rgb(200, 0, 0), title = 'OpenWeatherMap - ' + city + ', ' + state, description = 'Weather Information')
+                embed.set_image(url = 'https://openweathermap.org/img/wn/' + icon + '@2x.png')
                 embed.add_field(name = 'Condition', value = str(weacon))
                 embed.add_field(name = 'Current Temperature', value = str(currenttemp) + " degrees Fahrenheit")
                 embed.add_field(name = "Today's low", value = str(low) + " degrees Fahrenheit")
