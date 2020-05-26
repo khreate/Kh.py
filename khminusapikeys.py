@@ -141,6 +141,35 @@ async def on_message(message):
                 print('error')
                 embed = discord.Embed(colour = discord.Colour.from_rgb(200, 0, 0), title = 'OpenWeatherMap', description = 'Failed with HTTP ' + ' code{}\n'.format(r.status_code))
                 await message.channel.send(content = None, embed = embed)
+                                     
+        elif message.content.find('>help translate') != -1:
+            embed = discord.Embed(colour = discord.Colour.from_rgb(240, 230, 140), title = 'Watson Translate - Help', description = 'Syntax and Language Codes')
+            embed.add_field(name = 'Syntax', value = '>translate <language code> <text to translate>, eg. `>translate es Hello`')
+            embed.add_field(name = 'Language Codes', value = 'https://cloud.ibm.com/docs/language-translator?topic=language-translator-identifiable-languages')
+            await message.channel.send(content = None, embed = embed)
+                                                                                   
+        elif message.content.find('>translate') != -1:
+            try:
+                s = str(message.content)
+                langcode = s[11:13]
+                inter = s[13:]
+                lang = language_translator.identify(inter).get_result()
+                j = json.dumps(lang, indent = 2)
+                k = json.loads(j)
+                print(k)
+                autocode = str(k['languages'][0]['language'])
+                translation = language_translator.translate(
+                    text = inter,
+                    model_id = autocode + '-' + str(langcode)).get_result()
+                dump = (json.dumps(translation, indent = 2, ensure_ascii = False))
+                py = json.loads(dump)
+                finalTrans = py['translations'][0]['translation']
+                embed = discord.Embed(colour = discord.Colour.from_rgb(240, 230, 140), title = f'Watson Translate - {inter}', description = finalTrans)
+                await message.channel.send(content = None, embed = embed)
+            except:
+                print('error in translate')
+                embed = discord.Embed(colour = discord.Colour.from_rgb(240, 230, 140), title = 'Watson Translate', description = 'Most likely incorrect language code')
+                await message.channel.send(content = None, embed = embed)
 
 
     else:
